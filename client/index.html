@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Battle Example</title>
+  
+  <style>
+    #wrap{
+      float:right;
+      width:80%;
+    }
+    input{
+      width:auto;
+      height:auto;
+    }
+    #pre-combat{
+      display: block;
+    }
+    #combat{
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>COMBAT TRIAL</h1>
+  <div id="pre-combat">
+    <p>Your username:<input id="username" type="text"> <input id="joinBattle" type="button" value="Join to the battle"> </p> 
+  </div>
+  <p><b style="color: green;">Players connected: <span id="playersConnected"></span></b></p>
+  <p><b style="color: green;">Players in battle: <span id="playersInBattle"></span></b></p>
+  <hr>
+
+
+  <div id="combat">
+    <div>
+      <h2>BOWSER'S LIFE: <span style="color:red;" id="enemyLife">1,000,000</span></h2>
+      <h3>Focusing: <span id="focusingPlayer"></span></h3>
+      <img src="/bowser.png"></img><ul id='wrap' class="log"></ul>
+    </div>
+
+    <br>
+    <hr>
+
+    <div>
+
+      <h2>YOUR LIFE: <span style="color:green;" id="yourLife">1,000</span></h2>
+      <input id="autoAttackButton" type="button" value="ENABLE AUTOATTACK">
+      <div id="autoAttackCD">2</div>
+      <input id="cancelAutoAttackButton" type="button" value="CANCEL AUTOATTACK">
+    </div>
+  </div>
+
+
+  <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="/main.js"></script>
+</body>
+</html>
