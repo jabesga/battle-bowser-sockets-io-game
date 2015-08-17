@@ -16,40 +16,35 @@
     #pre-combat{
       display: block;
     }
+    #playersColumn{
+      float:left;
+      width: 20%;
+    }
     #combat{
-      display: none;
+      float:right;
+      width: 80%;
+      display: None;
     }
   </style>
 </head>
+
 <body>
-  <h1>COMBAT TRIAL</h1>
+  <h1 align="center">KNOWLEDGE TRIAL</h1>
   <div id="pre-combat">
-    <p>Your username:<input id="username" type="text"> <input id="joinBattle" type="button" value="Join to the battle"> </p> 
+    <p align="center">Your name:<input id="username" type="text"> <input id="joinGame" type="button" value="Join to the battle"> </p> 
   </div>
-  <p><b style="color: green;">Players connected: <span id="playersConnected"></span></b></p>
-  <p><b style="color: green;">Players in battle: <span id="playersInBattle"></span></b></p>
-  <hr>
-
-
+  <div id="playersColumn">
+    <p><b style="color: green;">Players playing: <span id="playersPlaying"></span></b></p>
+    <ul id="playersList">
+    </ul>
+  </div>
   <div id="combat">
-    <div>
-      <h2>BOWSER'S LIFE: <span style="color:red;" id="enemyLife">1,000,000</span></h2>
-      <h3>Focusing: <span id="focusingPlayer"></span></h3>
-      <img src="/bowser.png"></img><ul id='wrap' class="log"></ul>
-    </div>
-
-    <br>
-    <hr>
-
-    <div>
-
-      <h2>YOUR LIFE: <span style="color:green;" id="yourLife">1,000</span></h2>
-      <input id="autoAttackButton" type="button" value="ENABLE AUTOATTACK">
-      <div id="autoAttackCD">2</div>
-      <input id="cancelAutoAttackButton" type="button" value="CANCEL AUTOATTACK">
-    </div>
+    <p id="question"></p>
+    <input type="text" id="answer" value="">
+    <input type="submit" id="send_answer" value="Send">
+    <div id="result"></div>
   </div>
-
+ 
 
   <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>

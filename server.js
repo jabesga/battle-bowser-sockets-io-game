@@ -9,92 +9,88 @@ server.listen(port, function () {
     console.log('\t :: Express :: Listening on port ' + port );
 });
 
-// Routing
 app.use(express.static(__dirname + '/client'));
 
 // userList which are currently connected to the chat
-var userList = {};
-var playersConnected = 0;
-var playersInBattle = 0;
 
+var allClients = [];
+var usernameList = [];
+var question_list = [
+    ["Number of pi?", 3.14],
+    ["Velocidad maxima guepardo en la sabana", 115],
+    ["Color caballo blanco de Santiago", 'Blanco'],
+    ["Cuantos años son la carrera de psicologia", 4],
+];
 
-var enemyLife = 1000000;
+var current_question;
+var current_question_index;
+new_question();
 
-function enemyAttack(socket_id){
+function new_question(){
+    current_question_index = Math.floor(Math.random()*question_list.length)
+    current_question = question_list[current_question_index][0];
+}
 
-    for (var key in userList){
-        if(key == socket_id){
-            userList[key].emit('you damaged')
+io.on('connection', function (socket) {
+    
+    
+    console.log('\tNew player connected');
+    
+    socket.emit('user connected',{
+        usernameList : usernameList
+    });
+    
+    socket.on('check answer', function (data) {
+        if(data.answer == question_list[current_question_index][1]){
+            socket.emit('correct question');
+            new_question();
+            
+            io.sockets.emit('new question',{
+               question : current_question 
+            });
         }
         else{
-            userList[key].emit('ally damaged');
+            socket.emit('not correct question');
         }
-    }
-    //setTimeout(function() { enemyAttack() }, 10000)
-}
-
-function focusPlayer(username){
-    io.sockets.emit('focus player', {
-        focusedPlayer: username
     });
-}
-//
-io.on('connection', function (socket) {
-    //var addedUser = false;
-    console.log('\t\tNew player connected');
 
-    playersConnected++;
     
-    io.sockets.emit('user connected',{
-        playersConnected : playersConnected,
-        playersInBattle : playersInBattle
-    });
-
-    socket.on('join battle', function (data) {
-        userList[socket.id] = socket;
-        playersInBattle++;
-        io.sockets.emit('user joined battle',{
-            username : data.username,
-            playersInBattle : playersInBattle
-
-        })
-    });
-
-    socket.on('disconnect', function () {
-        console.log('\t\tPlayer disconnected');
-        playersConnected--;
-        if (userList[socket.id]){
-            playersInBattle--;
-            delete userList[socket.id];
-        }
-        io.sockets.emit('user disconnected',{
-          playersConnected : playersConnected,
-          playersInBattle : playersInBattle
+    socket.on('join game', function (data) {
+        
+        usernameList.push(data.username);
+        allClients[socket.id] = data.username;
+        
+        console.log('\t\t' + data.username + ' joined');
+        socket.emit('new question',{
+            'question' : current_question
         });
-        //playersInBattle--;
-        /*// remove the username from global userList list
-
-        if (addedUser) {
-            //delete userList[socket.username];
-            
-
-            // echo globally that this client has left
-            /*socket.broadcast.emit('user left', {
-                username: socket.username,
-                numUsers: numUsers
-            });
-        }*/
+        
+        io.sockets.emit('user joined',{
+            username : data.username,
+            usernameList: usernameList
+        });
+        
     });
-
-    socket.on('attack', function (data) {
-        //enemyAttack(socket.id);
-         enemyLife = enemyLife - 2;
-         socket.broadcast.emit('ally attacked',{
-           username : data.username
-         });
-         io.sockets.emit('enemy damaged', {
-             enemyLife: enemyLife
-         });
+        
+    
+    socket.on('disconnect', function (data) {
+        
+        if (allClients[socket.id]){
+            console.log('\t\t' + allClients[socket.id] +' disconnected');
+            
+            var i = usernameList.indexOf(allClients[socket.id]);
+            usernameList.splice(i, 1);
+            
+            io.sockets.emit('user disconnected',{
+                usernameList : usernameList,
+                username : allClients[socket.id]
+            });
+            
+            delete allClients[socket.id];
+        }
+        else{
+            console.log('\tPlayer disconnected');
+        }
     });
 
 });
