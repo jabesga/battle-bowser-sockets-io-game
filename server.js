@@ -38,7 +38,7 @@ function focusPlayer(username){
         focusedPlayer: username
     });
 }
-
+//
 io.on('connection', function (socket) {
     //var addedUser = false;
     console.log('\t\tNew player connected');
